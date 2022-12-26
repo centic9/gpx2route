@@ -22,7 +22,8 @@ This is a small tool to convert GPX files to route files that can be stored on S
 
 ## Upload route to the Watch
 
-TODO
+See [Adjusting watch settings and routes without Movescount](https://github.com/openambitproject/openambit/wiki/Adjusting-watch-settings-and-routes-without-Movescount#upload-custom-routes)
+for some instructions for using a tool from Openambit.
 
 ## Support this project
 
