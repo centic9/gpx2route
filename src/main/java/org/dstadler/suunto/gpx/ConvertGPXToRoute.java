@@ -54,8 +54,8 @@ public class ConvertGPXToRoute {
                     "routes_" + routeId + "_" +
                             name + ".json");
 
-            System.out.println("Reading from " + gpxFile.getAbsolutePath() +
-                    ", writing to " + outFile.getAbsolutePath() + " and " + outFilePoints.getAbsolutePath());
+            System.out.println("Reading from " + gpxFile +
+                    ", writing route '" + name + "' with id " + routeId + " to " + outFile + " and " + outFilePoints);
 
             SortedMap<Long, TrackPoint> points = GPXTrackpointsParser.parseContent(gpxFile);
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
@@ -112,7 +112,7 @@ public class ConvertGPXToRoute {
                         "}\n");
             }
 
-            System.out.println("Done writing to " + outFile.getAbsolutePath() + " and " + outFilePoints.getAbsolutePath());
+            System.out.println("Done writing route files for route '" + name + "' with id " + routeId);
         }
     }
 }
