@@ -17,8 +17,8 @@ This is a small tool to convert GPX files to route files that can be stored on S
 
     build/install/gpx2route/bin/gpx2route <gpx-file> [<gpx-file> ...]
     
-* This will process the given gpx-file and will produce two resulting files `routes_<id>_<name>.json` and `routes_<id>_points_<name>_points.json` 
-  which can be uploaded with Openambit
+* This will process the given gpx-file and will produce two resulting files in `$HOME/.openambit`, 
+  `routes_<id>_<name>.json` and `routes_<id>_points_<name>_points.json`, which can be uploaded with Openambit
 
 ## Upload route to the Watch
 
