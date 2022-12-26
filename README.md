@@ -1,6 +1,6 @@
 [![Gradle Status](https://gradleupdate.appspot.com/centic9/gpx2route/status.svg?branch=master)](https://gradleupdate.appspot.com/centic9/gpx2route/status)
 
-This is a small tool to convert GPX files to route files that can be stored on Suunto Ambit watches via [OpenAmbit](https://github.com/openambitproject/openambit).
+This is a small tool to convert GPX files to route files that can be stored on Suunto Ambit watches via [Openambit](https://github.com/openambitproject/openambit).
 
 ## Use it
 
@@ -15,10 +15,10 @@ This is a small tool to convert GPX files to route files that can be stored on S
 
 ### Run it
 
-    build/dist/bin/gpx2route <name> <id> <gpx-file>
+    build/install/gpx2route/bin/gpx2route <gpx-file> [<gpx-file> ...]
     
 * This will process the given gpx-file and will produce two resulting files `routes_<id>_<name>.json` and `routes_<id>_points_<name>_points.json` 
-  which can be uploaded with OpenAmbit
+  which can be uploaded with Openambit
 
 ## Upload route to the Watch
 
