@@ -1,4 +1,4 @@
-package org.dstadler.gpx;
+package org.dstadler.suunto.gpx;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +31,7 @@ class GPX2RouteTest {
 		try {
 			assertTrue(tempFile.delete());
 
-			GPX2Route.writeRouteFile("test", "123", gpx, tempFile);
+			GPX2Route.writeRouteFile("test", "123", gpx, tempFile, 1234L);
 
 			assertTrue(tempFile.exists());
 

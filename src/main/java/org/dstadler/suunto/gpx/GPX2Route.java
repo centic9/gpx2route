@@ -1,8 +1,10 @@
-package org.dstadler.gpx;
+package org.dstadler.suunto.gpx;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +19,19 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
+/**
+ * Small tool for reading a GPX file and converting it into the
+ * json-format that OpenAmbit expects for updating the list of
+ * routes that are stored on watches
+ *
+ * Note: You may need to simplify GPX tracks to not exceed a certain
+ * number of points, e.g. via:
+ * gpsbabel -i gpx -f way_iii.gpx -x simplify,count=1000 -o gpx -F merge.gpx
+ */
 public class GPX2Route {
+	// 2020-07-04T14:52:41.5
+	private static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.z");
+
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	// pretty-print the JSON files
@@ -33,22 +47,29 @@ public class GPX2Route {
 		String id = args[1];
 		String file = args[2];
 
+		if (!new File(file).exists()) {
+			System.err.println("Cannot read file: " + file);
+			System.exit(2);
+		}
+
 		// parse input GPX file
 		GPX gpx = GPX.read(file);
 
-		gpx.tracks()
+		long count = gpx.tracks()
 				.flatMap(Track::segments)
 				.flatMap(TrackSegment::points)
-				.forEach(System.out::println);
+				.count();
 
 		File route = new File("routes_" + id + "_" + name + ".json");
 		File points = new File("routes_" + id + "_points_" + name + "_points.json");
 
-		writeRouteFile(name, id, gpx, route);
+		writeRouteFile(name, id, gpx, route, new File(file).lastModified());
 		wrtiePointsFile(gpx, points);
+
+		System.out.println("Wrote " + count + " points from " + file + " to " + route.getAbsolutePath() + " and " + points.getAbsolutePath());
 	}
 
-	protected static void writeRouteFile(String name, String id, GPX gpx, File routeFile) throws IOException {
+	protected static void writeRouteFile(String name, String id, GPX gpx, File routeFile, long lastModified) throws IOException {
 		System.out.println("Writing route-file " + routeFile + " for GPX: " +
 				(gpx.getMetadata().isPresent() ? gpx.getMetadata().get().getName() : "unknown"));
 
@@ -73,7 +94,7 @@ public class GPX2Route {
 		 *     "Description": null,
 		 *     "Distance": 21760,
 		 *     "LastModifiedDate": "2013-07-11T13:17:45.6",
-		 *     "Name": "GIS Dornach",
+		 *     "Name": "GIS",
 		 *     "Points": null,
 		 *     "RouteID": 310212,
 		 *     "RoutePointsCount": null,
@@ -90,6 +111,12 @@ public class GPX2Route {
 		ObjectNode routeNode = JsonNodeFactory.instance.objectNode();
 		routeNode
 				//.put("ActivityID", "1")
+				.put("AscentAltitude", 0)
+				.put("CreatedBy", 483177)
+				.put("DescentAltitude", 0)
+				.put("Description", "")
+				.put("Distance", 0)
+				.put("LastModifiedDate", DATE_FORMAT.format(lastModified))
 				.put("Name", name)
 				.putNull("Points")
 				.put("RouteID", Long.parseLong(id))
@@ -140,6 +167,9 @@ public class GPX2Route {
 							.put("Altitude", wayPoint.getElevation().orElse(Length.of(0, Length.Unit.METER)).doubleValue())
 							.put("Latitude", wayPoint.getLatitude().doubleValue())
 							.put("Longitude", wayPoint.getLongitude().doubleValue())
+							.putNull("Name")
+							.put("RelativeDistance", 0)
+							.putNull("Type")
 					;
 
 					pointsArray.add(wayPointNode);
