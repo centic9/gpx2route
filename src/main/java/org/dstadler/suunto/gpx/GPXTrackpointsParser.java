@@ -71,6 +71,8 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
     private static final String TAG_LAT = "lat";
     private static final String TAG_LON = "lon";
 
+    private static final String TAG_METADATA = "metadata";
+
 	private static final FastDateFormat TIME_FORMAT_IN =
 			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("Europe/Vienna"));
 
@@ -78,6 +80,8 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 			FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
 
 	private final AtomicLong syntheticTime = new AtomicLong();
+
+	private boolean metaData = false;
 
     public static SortedMap<Long, TrackPoint> parseContent(File file) throws IOException, SAXException {
         GPXTrackpointsParser parser = new GPXTrackpointsParser();
@@ -102,6 +106,8 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
             if(attributes.getValue(TAG_LON) != null) {
                 currentTags.setLongitude(Double.parseDouble(attributes.getValue(TAG_LON)));
             }
+        } else if (localName.equals(TAG_METADATA)) {
+            metaData = true;
         }
     }
 
@@ -124,6 +130,8 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
 
 			configs.put(currentTags.time.getTime(), currentTags);
             currentTags = null;
+        } else if (localName.equals(TAG_METADATA)) {
+            metaData = false;
         } else {
             String value = characters.toString().trim();
             switch (localName) {
@@ -131,6 +139,10 @@ version="1.1" creator="Movescount - http://www.movescount.com" xmlns="http://www
                     currentTags.setElevation(Double.parseDouble(value));
                     break;
                 case TAG_TIME:
+                    if (metaData) {
+                        break;
+                    }
+
                     if (currentTags == null) {
                         log.warning("Found " + TAG_TIME + " with value '" + value + "' outside of " + TAG_TRKPT);
                         break;

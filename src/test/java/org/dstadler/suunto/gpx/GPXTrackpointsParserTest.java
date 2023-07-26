@@ -28,6 +28,45 @@ public class GPXTrackpointsParserTest {
             "  </trk>\n" +
             "</gpx>\n";
 
+    private static final String GPX_XML_METADATA =
+            "<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+            "    <metadata>\n"
+			+ "    <link href=\"connect.garmin.com\">\n"
+			+ "      <text>Garmin Connect</text>\n"
+			+ "    </link>\n"
+			+ "    <time>2022-07-09T13:32:31.000Z</time>\n"
+			+ "  </metadata>\n"
+			+ "<trk>\n" +
+            "    <name>Move</name>\n" +
+            "    <trkseg>\n" +
+            "      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
+            "        <ele>512</ele>\n" +
+            "        <time>2014-02-27T10:42:59.420Z</time>\n" +
+            "        <extensions>\n" +
+            "          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
+            "        </extensions>\n" +
+            "      </trkpt>\n" +
+            "    </trkseg>\n" +
+            "  </trk>\n" +
+            "</gpx>\n";
+
+    private static final String GPX_XML_INVALID_TIME =
+            "<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+			" <time>2022-07-09T13:32:31.000Z</time>\n" +
+			"<trk>\n" +
+            "    <name>Move</name>\n" +
+            "    <trkseg>\n" +
+            "      <trkpt lat=\"48.456194\" lon=\"13.99866\">\n" +
+            "        <ele>512</ele>\n" +
+            "        <time>2014-02-27T10:42:59.420Z</time>\n" +
+            "        <extensions>\n" +
+            "          <gpxdata:speed>0.413765975271989</gpxdata:speed>\n" +
+            "        </extensions>\n" +
+            "      </trkpt>\n" +
+            "    </trkseg>\n" +
+            "  </trk>\n" +
+            "</gpx>\n";
+
     private static final String GPX_XML_NO_TIME =
             "<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\" xmlns:gpxdata=\"http://www.topografix.com/GPX/1/0\" xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
             "  <trk>\n" +
@@ -63,7 +102,27 @@ public class GPXTrackpointsParserTest {
         assertEquals(512, point.getElevation(), 0.000001);
     }
 
-    @Test
+	@Test
+	public void parseMetaData() throws Exception {
+		GPXTrackpointsParser parser = new GPXTrackpointsParser();
+		SortedMap<Long, TrackPoint> map =
+				parser.parseContent(new ByteArrayInputStream(GPX_XML_METADATA.getBytes(StandardCharsets.UTF_8)));
+
+		assertNotNull(map);
+		assertEquals(1, map.size(), "Had: " + map);
+	}
+
+	@Test
+	public void parseInvalidTime() throws Exception {
+		GPXTrackpointsParser parser = new GPXTrackpointsParser();
+		SortedMap<Long, TrackPoint> map =
+				parser.parseContent(new ByteArrayInputStream(GPX_XML_INVALID_TIME.getBytes(StandardCharsets.UTF_8)));
+
+		assertNotNull(map);
+		assertEquals(1, map.size(), "Had: " + map);
+	}
+
+	@Test
     public void parseFile() throws Exception {
         SortedMap<Long, TrackPoint> map =
                 GPXTrackpointsParser.parseContent(new File("src/test/resources/t233338634_Schneeschuwandern_Ploeckenstein-.gpx"));
