@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.dstadler:commons-dost:1.2.0.2'
-    implementation 'commons-io:commons-io:2.13.0'
+	implementation 'org.dstadler:commons-dost:1.2.0.3'
+    implementation 'commons-io:commons-io:2.14.0'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
