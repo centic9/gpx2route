@@ -1,3 +1,7 @@
+__This repository is archived as the Openambit project is dormant since a long time as well.__
+
+----
+
 [![Gradle Status](https://gradleupdate.appspot.com/centic9/gpx2route/status.svg?branch=master)](https://gradleupdate.appspot.com/centic9/gpx2route/status)
 
 This is a small tool to convert GPX files to route files that can be stored on Suunto Ambit watches via [Openambit](https://github.com/openambitproject/openambit).
